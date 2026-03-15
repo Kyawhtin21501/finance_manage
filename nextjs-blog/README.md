@@ -1,52 +1,3 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-1 DB 設計
-2 API 設計
-3 Backend
-4 Frontend
-5 UI polish
-
-1 Database design
-2 Prisma schema
-3 TypeScript types
-4 API
-5 Frontend
-
 # 家計管理ダッシュボードアプリ
 
 このプロジェクトは **Next.js / TypeScript / Prisma** を使用して作る
@@ -68,6 +19,21 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ---
 
+# 開発フロー
+
+このプロジェクトは以下の順番で開発します。
+
+```
+1 Database Design
+2 Prisma Schema
+3 TypeScript Types
+4 API Development
+5 Frontend Development
+6 UI Improvement
+```
+
+---
+
 # データベース設計
 
 このアプリでは **1 つのデータベース**を使用し、
@@ -86,13 +52,22 @@ transactions
 ```
 users
   |
-  | userId
+  | 1
   |
-transactions
-  |
-  | categoryId
-  |
+  | N
 categories
+  |
+  | 1
+  |
+  | N
+transactions
+```
+
+つまり
+
+```
+1 user → multiple categories
+1 category → multiple transactions
 ```
 
 ---
@@ -109,23 +84,24 @@ categories
 
 # categories テーブル
 
-支出・収入のカテゴリを管理します。
+ユーザーが自由にカテゴリを作成できます。
 
 | column | type             |
 | ------ | ---------------- |
 | id     | string           |
 | name   | string           |
 | type   | income / expense |
+| userId | string           |
 
 例
 
 ```
 Food
 Rent
-Tax
-Salary
-Drinking
-Cigarette
+Gym
+Coffee
+Taxi
+Game
 ```
 
 ---
@@ -140,25 +116,10 @@ Cigarette
 | amount     | number           |
 | type       | income / expense |
 | categoryId | string           |
+| userId     | string           |
 | note       | string           |
 | date       | datetime         |
-| userId     | string           |
 | createdAt  | datetime         |
-
----
-
-# 開発の進め方
-
-このプロジェクトは以下の順番で開発します。
-
-```
-1 データベース設計
-2 Prisma schema 作成
-3 TypeScript 型定義
-4 API 開発
-5 フロントエンド開発
-6 UI 改善
-```
 
 ---
 
@@ -183,7 +144,11 @@ UI Components
 ```
 app/
  ├ api/
- ├ dashboard/
+ │   ├ transactions
+ │   └ categories
+ │
+ ├ dashboard
+ │
  ├ layout.tsx
  └ page.tsx
 
@@ -191,11 +156,22 @@ prisma/
  └ schema.prisma
 
 src/
- ├ components/
- ├ lib/
- ├ services/
- ├ types/
- └ utils/
+ ├ components
+ │   ├ ui
+ │   ├ dashboard
+ │   └ forms
+ │
+ ├ lib
+ │   └ prisma.ts
+ │
+ ├ services
+ │   ├ transaction.service.ts
+ │   └ category.service.ts
+ │
+ ├ types
+ │   └ transaction.ts
+ │
+ └ utils
 ```
 
 ---
@@ -203,7 +179,7 @@ src/
 # 主な機能
 
 - ユーザー認証
-- 収入・支出の記録
+- 収入 / 支出の記録
 - カテゴリ管理
 - 月ごとのダッシュボード
 - 支出分析
@@ -213,6 +189,7 @@ src/
 # 今後追加予定の機能
 
 - 予算管理 (budget)
-- カテゴリのカスタマイズ
-- グラフ表示
-- モバイルアプリ（React Native）
+- 支出グラフ表示
+- 月別レポート
+- モバイルアプリ (React Native)
+- CSV エクスポート
